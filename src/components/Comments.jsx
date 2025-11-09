@@ -8,11 +8,11 @@ import { GoTriangleDown } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
 import { GoReply } from "react-icons/go";
-// import { IoCloseOutline } from "react-icons/io5";
 import { FiEdit2 } from "react-icons/fi";
 import AuthContext from "../AuthContext";
 import ApiCall from "../apiCalls";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import SelectionContext from "../selectionContext";
 
 const Comments = ({
   toggleSelectedComment,
@@ -20,10 +20,11 @@ const Comments = ({
   updateSelectedComment,
   comment,
   mutate,
-  selectedPost,
   updateComments,
 }) => {
   const [open, setOpen] = useState(true);
+
+  const { selectedPost } = useContext(SelectionContext);
 
   const [editing, setEditing] = useState(false);
 

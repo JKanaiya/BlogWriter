@@ -3,18 +3,38 @@ import text from "../styles/text.module.css";
 import icons from "../styles/icons.module.css";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaAngleDoubleRight } from "react-icons/fa";
-import { TiWeatherNight } from "react-icons/ti";
-import { RxHamburgerMenu } from "react-icons/rx";
+import { AiOutlineEdit } from "react-icons/ai";
 import { BiSolidComment, BiSolidCommentX } from "react-icons/bi";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import Shiki from "@shikijs/markdown-it";
+import MarkdownIt from "markdown-it";
+import { useContext } from "react";
+import SelectionContext from "../selectionContext";
+import AuthContext from "../AuthContext";
+
+const md = MarkdownIt({
+  linkify: false,
+  typographer: false,
+});
+
+md.use(
+  await Shiki({
+    theme: "kanagawa-dragon",
+  }),
+);
 
 export default function Posts({
   data,
   toggleSelectedPost,
-  selectedPost,
   toggleComments,
   commentsVisible,
 }) {
+  const nav = useNavigate();
+
+  const { isLoggedIn } = useContext(AuthContext);
+
+  const { selectedPost } = useContext(SelectionContext);
+
   return (
     <div className={posts.container}>
       {selectedPost && (
@@ -30,14 +50,21 @@ export default function Posts({
                 <BiSolidComment onClick={toggleComments} />
               )}
             </div>
+            {isLoggedIn && (
+              <span className={icons.closeIcon} onClick={() => nav("new-post")}>
+                <AiOutlineEdit />
+              </span>
+            )}
           </div>
           <div className={posts.selectedPost}>
-            <h3 className={text.headingTitle}>{selectedPost.title}</h3>
-            <p className={text.baseText}>{selectedPost.text}</p>
+            <h1>{selectedPost.title}</h1>
+            <div
+              dangerouslySetInnerHTML={{ __html: md.render(selectedPost.text) }}
+            />
           </div>
         </div>
       )}
-      {!data && <p> "No Posts are Available"</p>}
+      {data.length == 0 && <Link to="new-post">New Post</Link>}
       {!selectedPost &&
         data.map((post) => (
           <div className={posts.post} key={post.id}>
@@ -45,7 +72,10 @@ export default function Posts({
               <h3 className={text.h3}>{post.title}</h3>
               <p className={text.author}>{post.writer.email}</p>
             </div>
-            <p className={text.baseText}>{post.text}</p>
+            <div
+              dangerouslySetInnerHTML={{ __html: md.render(post.text) }}
+              style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+            />
             <span
               className={posts.iconButton}
               onClick={() => toggleSelectedPost(post)}

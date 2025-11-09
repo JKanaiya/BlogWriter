@@ -1,20 +1,22 @@
 .container {
   display: flex;
-  flex-direction: column;
   animation: mask-up;
-  /* animation-timeline: scroll(self); */
-  /* animation-range: 0 1rem; */
   position: relative;
+  column-gap: 20px;
   mask-composite: exclude;
-  font-family: "Stack Sans Notch", sans-serif;
-  /* max-height: 85dvh; */
-  row-gap: 35px;
+  min-height: 95dvh;
   padding: 1%;
-  max-width: 50%;
-  min-width: 50%;
+  min-width: 90%;
   scrollbar-width: none;
   overflow-y: auto;
   scroll-behavior: smooth;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 2% 1%;
+  row-gap: 20px;
 }
 
 @keyframes mask-up {
@@ -23,6 +25,13 @@
       100% 120px,
       100% 100%;
   }
+}
+
+.body {
+  composes: bgColor from "../colors.module.css";
+  min-height: 100svh;
+  scrollbar-width: none;
+  row-gap: 10px;
 }
 
 .top {
@@ -40,31 +49,73 @@
   flex: 1 1 10%;
 }
 
-.post > * {
-  padding: 2%;
-  border-radius: 10px;
+.input {
+  composes: softWhite from "../colors.module.css";
+  min-height: 80dvh;
+  padding: 1%;
+  border: none;
+  border-radius: 5px;
+  font-family: "Ubuntu", sans-serif;
+  background: rgba(236, 236, 236, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(13.8px);
+  -webkit-backdrop-filter: blur(13.8px);
+}
+
+.titleInput {
+  composes: softWhite from "../colors.module.css";
+  padding: 1%;
+  border: none;
+  border-radius: 5px;
+  font-family: "Ubuntu", sans-serif;
+  background: rgba(236, 236, 236, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(13.8px);
+  -webkit-backdrop-filter: blur(13.8px);
 }
 
 .post {
   composes: softerWhite from "../colors.module.css";
   background-color: oklch(0.1558 0.0456 260.37);
   padding: 3%;
-  max-height: 250px;
-  text-overflow: ellipsis;
+  font-family: "Stack Sans Notch", sans-serif;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
   flex-grow: 1;
+  max-width: 60%;
   border-radius: 10px;
   position: relative;
-  /* border: 0.01em solid oklch(0.6721 0.032 260.37); */
   box-shadow: 5px 5px 2px oklch(0.2003 0.032 260.37);
-  /* width: max(47%, 15rem); */
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.links a {
+  background-color: hsl(218, 36%, 05%);
+  padding: 4% 9%;
+  margin-left: 10px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-family: "Anton SC";
+  margin-right: 10px;
+  column-gap: 10px;
+  text-decoration: none;
+  color: oklch(70% 0 90);
+}
+
+.post > a:link {
+  color: oklch(0.4466 0.0873 260.37);
 }
 
 .post pre {
   padding: 2%;
   border-radius: 10px;
+  text-wrap: auto;
 }
 
 .iconButton {
@@ -86,20 +137,12 @@
 }
 
 .selectedContainer {
-  composes: softerWhite from "../colors.module.css";
-  background-color: oklch(0.1558 0.0456 260.37);
   width: 100%;
   min-height: 60dvh;
   overflow: hidden;
+  display: flex;
   box-shadow: 5px 5px 2px oklch(0.2003 0.032 260.37);
-  max-height: 90dvh;
-  overflow-y: scroll;
-}
-
-.selectedContainer pre {
-  padding: 2%;
-  border-radius: 10px;
-  text-wrap: auto;
+  flex-direction: column;
 }
 
 .actions {
@@ -115,13 +158,15 @@
 .selectedPost {
   display: flex;
   flex-direction: column;
-  padding: 5%;
+  padding: 5% 2%;
   min-height: 70%;
   row-gap: 10px;
+  max-width: 90%;
 }
 
 .selectedPost > * {
   min-height: 50%;
+  max-width: 80%;
   text-wrap: pretty;
 }
 
@@ -134,5 +179,8 @@
 @media screen and (max-width: 600px) {
   .post {
     min-width: 90%;
+  }
+  .container {
+    flex-direction: column;
   }
 }

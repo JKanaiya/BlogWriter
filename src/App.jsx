@@ -6,9 +6,13 @@ import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Auths from "./components/Auth";
 import "./styles/reset.css";
+import { NewPost } from "./components/NewPost";
+import SelectionContext from "./selectionContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [selectedPost, setSelectedPost] = useState(null);
 
   const [email, setEmail] = useState(null);
 
@@ -19,20 +23,24 @@ function App() {
 
   const logout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem("user");
     setEmail(null);
   };
 
   return (
     <AuthContext value={{ isLoggedIn, email, login, logout }}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="auth" element={<Auths />}>
-            <Route path="sign-up" element={<SignUp />} />
-            <Route path="log-in" element={<Login />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <SelectionContext value={{ selectedPost, setSelectedPost }}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="new-post" element={<NewPost />} />
+            <Route path="auth" element={<Auths />}>
+              <Route path="sign-up" element={<SignUp />} />
+              <Route path="log-in" element={<Login />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </SelectionContext>
     </AuthContext>
   );
 }

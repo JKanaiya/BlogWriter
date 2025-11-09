@@ -2,6 +2,7 @@
   composes: bgColor from "../colors.module.css";
   min-height: 100svh;
   scrollbar-width: none;
+  position: relative;
   row-gap: 10px;
 }
 
@@ -19,6 +20,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   box-shadow: 2px 0.1px 1px 0.1px oklch(90% 0 90);
 }
 
