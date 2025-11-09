@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Home from "./components/Home";
 import AuthContext from "./AuthContext";
 import { BrowserRouter, Route, Routes } from "react-router";
@@ -15,6 +15,13 @@ function App() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    const email = localStorage.getItem("email");
+    if (email) {
+      login(email);
+    }
+  }, []);
 
   const login = (email) => {
     setIsLoggedIn(true);

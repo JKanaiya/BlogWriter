@@ -181,15 +181,17 @@ export default function Home() {
             onChange={searchPosts}
           />
         </div>
-        <button
-          className={home.button}
-          style={{
-            display: "flex",
-          }}
-          onClick={() => nav("/new-post")}
-        >
-          <IoAdd className={icons.edit} />
-        </button>
+        {isLoggedIn && (
+          <button
+            className={home.button}
+            style={{
+              display: "flex",
+            }}
+            onClick={() => nav("/new-post")}
+          >
+            <IoAdd className={icons.edit} />
+          </button>
+        )}
       </div>
       <div className={home.container}>
         {loading && <p> Loading...</p>}

@@ -1,6 +1,6 @@
-import ApiCall from "../apiCalls";
 import { useRef, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router";
+import ApiCall from "../apiCalls";
+import { useOutletContext, useNavigate } from "react-router";
 import text from "../styles/text.module.css";
 import auth from "../styles/auth.module.css";
 import icons from "../styles/icons.module.css";
@@ -8,24 +8,41 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Link } from "react-router";
 import Validate from "../components/Validate";
 
-const Login = () => {
-  const nav = useNavigate();
-  const [login] = useOutletContext();
+const SignUp = () => {
+  const [passwordConfirm, setPasswordConfirm] = useState(null);
+
   const password = useRef(null);
+
   const email = useRef(null);
+
+  const passMatch = useRef(null);
+
+  const [login] = useOutletContext();
+
   const [errors, setErrors] = useState({
     email: "",
     password: "",
     passMatch: "",
-    invalidCredentials: "",
   });
 
-  const changeEmail = (e) => {
-    email.current = e.target.value;
-  };
+  const nav = useNavigate();
 
-  const changePassword = (e) => {
-    password.current = e.target.value;
+  const validateForm = () => {
+    if (!validateEmail()) return false;
+
+    if (!validatePassword()) return false;
+
+    if (!passwordConfirm) {
+      setErrors(...errors, { passwordMatch: "Passwords do not Match!" });
+      return false;
+    }
+    setErrors({
+      email: "",
+      password: "",
+      passMatch: "",
+    });
+
+    return true;
   };
 
   const validateEmail = () => {
@@ -48,22 +65,30 @@ const Login = () => {
     }
   };
 
-  const validateForm = () => {
-    if (!validateEmail()) return false;
-
-    if (!validatePassword()) return false;
-
-    setErrors({ email: "", password: "" });
-
-    return true;
+  const changeEmail = (e) => {
+    email.current = e.target.value;
   };
 
-  const attemptLogin = async (formData) => {
+  const changePassword = (e) => {
+    password.current = e.target.value;
+  };
+
+  const validatePassMatch = (e) => {
+    passMatch.current = e.target.value;
+
+    setPasswordConfirm(e.target.value);
+
+    if (passwordConfirm && passwordConfirm == password) {
+      setErrors({ ...errors, passMatch: "" });
+    } else {
+      setErrors({ ...errors, passMatch: "Passwords do not match!" });
+    }
+  };
+
+  const attemptSignIn = async (formData) => {
     if (!validateForm()) return;
 
-    const confirm = await ApiCall.logIn(formData);
-
-    console.log(confirm);
+    const confirm = await ApiCall.signUp(formData);
 
     if (confirm.data.errors) {
       confirm.data.errors.forEach((err) => {
@@ -71,19 +96,27 @@ const Login = () => {
           case "email":
             setErrors({ ...errors, email: err.msg });
             break;
+
           case "password":
             setErrors({ ...errors, password: err.msg });
             break;
-          default:
-            setErrors({ ...errors, invalidCredentials: err.msg });
+
+          case "passwordConfirm":
+            setErrors({ ...errors, passMatch: err.msg });
+            console.log(errors);
+            break;
         }
       });
     }
 
     if (confirm.status == 200) {
-      localStorage.setItem("token", confirm.data.token);
-      login(formData.get("email"));
-      nav("/");
+      const loginConfirm = await ApiCall.logIn(formData);
+      if (loginConfirm.status == 200) {
+        localStorage.setItem("token", loginConfirm.data.token);
+        localStorage.setItem("email", formData.get("email"));
+        login(formData.get("email"));
+        nav("/");
+      }
     }
   };
 
@@ -93,24 +126,25 @@ const Login = () => {
         <Link className={icons.authCloseIcon} to="/">
           <IoCloseOutline />
         </Link>
-        <h1 className={text.headingTitle}>LOGIN</h1>
-        <p className={text.italicText}>to continue your conversation</p>
-        <form className={auth.form} action={attemptLogin}>
+
+        <h1 className={text.headingTitle}>Sign in</h1>
+        <p className={text.italicText}>to join the conversation</p>
+
+        <form action={attemptSignIn} className={auth.form}>
           <div className={auth.inputContainer}>
-            {errors.invalidCredentials && (
-              <div className={auth.error}>{errors.invalidCredentials}</div>
-            )}
             {errors.email && <div className={auth.error}>{errors.email}</div>}
             <input
               className={auth.input}
               type="text"
               name="email"
               id="email"
+              required
               onBlur={validateEmail}
               onChange={changeEmail}
               placeholder="Email"
             />
           </div>
+
           <div className={auth.inputContainer}>
             {errors.password && (
               <div className={auth.error}>{errors.password}</div>
@@ -119,10 +153,25 @@ const Login = () => {
               className={auth.input}
               type="password"
               name="password"
-              id="password"
+              id=""
+              required
               onBlur={validatePassword}
               onChange={changePassword}
               placeholder="Password"
+            />
+          </div>
+
+          <div className={auth.inputContainer}>
+            {passwordConfirm && errors.passMatch && (
+              <div className={auth.error}>{errors.passMatch}</div>
+            )}
+            <input
+              className={auth.input}
+              type="password"
+              name="passwordConfirm"
+              placeholder="Confirm Password"
+              required
+              onChange={validatePassMatch}
             />
           </div>
           <button className={auth.button} type="submit">
@@ -134,4 +183,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

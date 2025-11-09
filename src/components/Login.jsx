@@ -82,6 +82,7 @@ const Login = () => {
 
     if (confirm.status == 200) {
       localStorage.setItem("token", confirm.data.token);
+      localStorage.setItem("email", formData.get("email"));
       login(formData.get("email"));
       nav("/");
     }
