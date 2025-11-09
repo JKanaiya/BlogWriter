@@ -4,21 +4,24 @@ import ApiCall from "../apiCalls";
 import Comments from "./Comments";
 import Posts from "./Posts";
 import { useContext, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthContext from "../AuthContext";
 import home from "../styles/home.module.css";
 import text from "../styles/text.module.css";
 import comment from "../styles/comments.module.css";
 import icons from "../styles/icons.module.css";
 import { RiSearch2Line } from "react-icons/ri";
+import { IoAdd } from "react-icons/io5";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import SelectionContext from "../selectionContext";
 
 export default function Home() {
+  const { isLoggedIn, email } = useContext(AuthContext);
+  const { selectedPost, setSelectedPost } = useContext(SelectionContext);
+
   const [commentsVisible, setCommentsVisible] = useState(false);
 
   const [selectedComment, setSelectedComment] = useState(null);
-
-  const [selectedPost, setSelectedPost] = useState(null);
 
   const [filter, setFilter] = useState(null);
 
@@ -35,7 +38,7 @@ export default function Home() {
     setFilter(e.target.value);
   };
 
-  const { isLoggedIn, email } = useContext(AuthContext);
+  const nav = useNavigate();
 
   const updateComments = (selectedPost, comment) => {
     const postIndex = data.findIndex((post) => post.id == selectedPost.id);
@@ -178,6 +181,15 @@ export default function Home() {
             onChange={searchPosts}
           />
         </div>
+        <button
+          className={home.button}
+          style={{
+            display: "flex",
+          }}
+          onClick={() => nav("/new-post")}
+        >
+          <IoAdd className={icons.edit} />
+        </button>
       </div>
       <div className={home.container}>
         {loading && <p> Loading...</p>}
@@ -194,7 +206,6 @@ export default function Home() {
                 : data
             }
             toggleSelectedPost={toggleSelectedPost}
-            selectedPost={selectedPost}
             commentsVisible={commentsVisible}
             toggleComments={toggleComments}
           />
@@ -212,7 +223,6 @@ export default function Home() {
                       comment={comment}
                       mutate={mutate}
                       updateSelectedComment={updateSelectedComment}
-                      selectedPost={selectedPost}
                       toggleSelectedComment={toggleSelectedComment}
                     />
                   </div>

@@ -51,6 +51,36 @@ const ApiCall = (function () {
     return result;
   };
 
+  const newPost = async function ({ text, userId, email, title }) {
+    const result = await api
+      .post("post", {
+        text,
+        userId,
+        title,
+        email,
+        published: true,
+      })
+      .catch(function (err) {
+        return err.response;
+      });
+    return result;
+  };
+
+  const editPost = async function ({ text, postId, email, title }) {
+    const result = await api
+      .post("update-post", {
+        text,
+        postId,
+        title,
+        email,
+        published: true,
+      })
+      .catch(function (err) {
+        return err.response;
+      });
+    return result;
+  };
+
   const createComment = async function ({ comment, postId, commentId, email }) {
     return commentId
       ? await api.put("comment", {
@@ -81,6 +111,8 @@ const ApiCall = (function () {
     signUp,
     logIn,
     logOut,
+    newPost,
+    editPost,
     createComment,
     updateComment,
     deleteComment,
