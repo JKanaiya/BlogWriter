@@ -80,10 +80,20 @@ const Login = () => {
       });
     }
 
-    if (confirm.status == 200) {
-      localStorage.setItem("token", confirm.data.token);
+    try {
+      const response = await ApiCall.logIn(formData);
+
+      if (!response.status == 200) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", formData.get("email"));
+
       login(formData.get("email"));
       nav("/");
+    } catch (e) {
+      console.log(`Error logging in: ${e}`);
     }
   };
 

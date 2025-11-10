@@ -11,7 +11,6 @@ import { GoReply } from "react-icons/go";
 import { FiEdit2 } from "react-icons/fi";
 import AuthContext from "../AuthContext";
 import ApiCall from "../apiCalls";
-import { ToastContainer, toast, Bounce } from "react-toastify";
 import SelectionContext from "../selectionContext";
 
 const Comments = ({
@@ -19,6 +18,8 @@ const Comments = ({
   selectedComment,
   updateSelectedComment,
   comment,
+  errorNotify,
+  successNotify,
   mutate,
   updateComments,
 }) => {
@@ -30,50 +31,34 @@ const Comments = ({
 
   const { email } = useContext(AuthContext);
 
-  const successNotify = (message) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
-    });
-  };
-
-  const errorNotify = (message) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
-    });
-  };
-
   const deleteComment = async (commentId) => {
-    const confirm = await ApiCall.deleteComment({ commentId });
-    confirm.status == 200
-      ? successNotify("Comment deleted successfully")
-      : errorNotify("Failed to delete comment!");
+    try {
+      const response = await ApiCall.deleteComment({ commentId });
+
+      if (!response == 200) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
+
+      successNotify("Comment deleted successfully");
+    } catch (e) {
+      errorNotify("Failed to delete comment!");
+
+      console.log(`Error deleting comment: ${e}`);
+    }
   };
 
   const updateComment = async (formData, comment) => {
     const editedText = formData.get("editedText");
+    try {
+      const response = await ApiCall.updateComment({
+        commentId: formData.get("commentId"),
+        text: editedText,
+      });
 
-    const confirm = await ApiCall.updateComment({
-      commentId: formData.get("commentId"),
-      text: editedText,
-    });
+      if (!response == 200) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
 
-    if (confirm.status == 200) {
       toggleSelectedComment(comment);
 
       updateSelectedComment({ editedText });
@@ -85,8 +70,9 @@ const Comments = ({
       toggleEditing();
 
       successNotify("Comment updated successfully");
-    } else {
+    } catch (e) {
       errorNotify("Failed to update comment!");
+      console.log(`Error updating comment: ${e}`);
     }
   };
 
@@ -189,7 +175,6 @@ const Comments = ({
             </div>
           );
         })}
-      <ToastContainer />
     </div>
   );
 };
