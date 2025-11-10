@@ -1,15 +1,37 @@
 import SignUp from "./components/SignUp";
 import Home from "./components/Home";
+import Auth from "./components/Auth";
 import Login from "./components/Login";
-// import ErrorPage from "./components/ErrorPage";
+import { createBrowserRouter } from "react-router";
+import ErrorPage from "./components/ErrorPage";
+import { NewPost } from "./components/NewPost";
 
-const routes = [
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <ErrorPage />,
   },
-  { path: "log-in", element: <Login /> },
-  { path: "sign-up", element: <SignUp /> },
-];
+  {
+    path: "new-post",
+    element: <NewPost />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "auth",
+    element: <Auth />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "sign-up",
+        element: <SignUp />,
+      },
+      {
+        path: "log-in",
+        element: <Login />,
+      },
+    ],
+  },
+]);
 
-export default routes;
+export default router;

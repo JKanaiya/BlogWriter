@@ -83,14 +83,14 @@ const ApiCall = (function () {
 
   const createComment = async function ({ comment, postId, commentId, email }) {
     return commentId
-      ? await api.put("comment", {
+      ? await api.post("comment", {
           comment,
           postId,
           commentId,
           email,
           parentComment: true,
         })
-      : await api.put("comment", {
+      : await api.post("comment", {
           comment,
           postId,
           email,
@@ -102,7 +102,7 @@ const ApiCall = (function () {
   };
 
   const deleteComment = async function ({ commentId }) {
-    return await api.post("comment", {
+    return await api.post("delete-comment", {
       commentId,
     });
   };

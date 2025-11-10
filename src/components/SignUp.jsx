@@ -109,14 +109,20 @@ const SignUp = () => {
       });
     }
 
-    if (confirm.status == 200) {
-      const loginConfirm = await ApiCall.logIn(formData);
-      if (loginConfirm.status == 200) {
-        localStorage.setItem("token", loginConfirm.data.token);
-        localStorage.setItem("email", formData.get("email"));
-        login(formData.get("email"));
-        nav("/");
+    try {
+      const response = await ApiCall.logIn(formData);
+
+      if (!response.status == 200) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
       }
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", formData.get("email"));
+
+      login(formData.get("email"));
+      nav("/");
+    } catch (e) {
+      console.log(`Error signing up: ${e}`);
     }
   };
 

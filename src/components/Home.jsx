@@ -13,10 +13,12 @@ import icons from "../styles/icons.module.css";
 import { RiSearch2Line } from "react-icons/ri";
 import { IoAdd } from "react-icons/io5";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 import SelectionContext from "../selectionContext";
 
 export default function Home() {
   const { isLoggedIn, email } = useContext(AuthContext);
+
   const { selectedPost, setSelectedPost } = useContext(SelectionContext);
 
   const [commentsVisible, setCommentsVisible] = useState(false);
@@ -24,6 +26,34 @@ export default function Home() {
   const [selectedComment, setSelectedComment] = useState(null);
 
   const [filter, setFilter] = useState(null);
+
+  const successNotify = (message) => {
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
+    });
+  };
+
+  const errorNotify = (message) => {
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
+    });
+  };
 
   const getPosts = async (url) => {
     const posts = await axios.get(url + "posts");
@@ -111,36 +141,56 @@ export default function Home() {
 
   const addComment = async (formData) => {
     if (selectedComment) {
-      const confirm = await ApiCall.createComment({
-        comment: formData.get("comment"),
-        postId: null,
-        commentId: selectedComment.id,
-        email,
-      });
-      if (confirm.status == 200) {
+      try {
+        const response = await ApiCall.createComment({
+          comment: formData.get("comment"),
+          postId: null,
+          commentId: selectedComment.id,
+          email,
+        });
+
+        if (!response.status == 200) {
+          throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
         updateComments(selectedPost, {
-          id: confirm.data.id,
+          id: response.data.id,
           text: formData.get("comment"),
           postId: selectedPost.id,
           subComments: [""],
           selectedCommentId: selectedComment.id,
           User: { email },
         });
+
+        successNotify("Successfully added comment!");
+      } catch (e) {
+        errorNotify("Failed to add comment!");
+        console.log(`Error adding comment: ${e}`);
       }
     } else {
-      const confirm = await ApiCall.createComment({
-        comment: formData.get("comment"),
-        postId: selectedPost.id,
-        email,
-      });
-      if (confirm.status == 200) {
+      try {
+        const response = await ApiCall.createComment({
+          comment: formData.get("comment"),
+          postId: selectedPost.id,
+          email,
+        });
+
+        if (!response.status == 200) {
+          throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
         updateComments(selectedPost, {
-          id: confirm.data.id,
+          id: response.data.id,
           text: formData.get("comment"),
           subComments: [""],
           postId: selectedPost.id,
           User: { email },
         });
+
+        successNotify("Successfully added comment!");
+      } catch (e) {
+        errorNotify("Failed to add comment!");
+        console.log(`Error adding comment: ${e}`);
       }
     }
   };
@@ -223,6 +273,8 @@ export default function Home() {
                       updateComments={updateComments}
                       selectedComment={selectedComment}
                       comment={comment}
+                      successNotify={successNotify}
+                      errorNotify={errorNotify}
                       mutate={mutate}
                       updateSelectedComment={updateSelectedComment}
                       toggleSelectedComment={toggleSelectedComment}
@@ -256,6 +308,7 @@ export default function Home() {
           </div>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 }

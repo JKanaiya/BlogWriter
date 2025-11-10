@@ -1,0 +1,21 @@
+.container {
+  font-family: "Stack Sans Notch", sans-serif;
+  place-content: center;
+  place-items: center;
+  display: flex;
+  min-height: 100dvh;
+  composes: bgColor from "../colors.module.css";
+  flex-direction: column;
+}
+
+.heading {
+  color: oklch(70% 0 90);
+  font-size: 10rem;
+}
+
+.button {
+  border: 0.1em solid oklch(0.6721 0.032 260.37);
+  color: oklch(70% 0 90);
+  border-radius: 10px;
+  padding: 1% 3%;
+}
