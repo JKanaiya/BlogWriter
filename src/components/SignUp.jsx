@@ -78,7 +78,7 @@ const SignUp = () => {
 
     setPasswordConfirm(e.target.value);
 
-    if (passwordConfirm && passwordConfirm == password) {
+    if (passwordConfirm && passMatch.current == password.current) {
       setErrors({ ...errors, passMatch: "" });
     } else {
       setErrors({ ...errors, passMatch: "Passwords do not match!" });
