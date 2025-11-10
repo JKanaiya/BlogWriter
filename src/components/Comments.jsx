@@ -158,6 +158,7 @@ const Comments = ({
         comment.subComments.map((c) => {
           return (
             <div
+              key={c.id}
               style={{
                 display: open ? "block" : "none",
                 paddingLeft: 25,
