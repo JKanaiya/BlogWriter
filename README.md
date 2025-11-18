@@ -1,12 +1,46 @@
-# React + Vite
+# BlogWriter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BlogWriter provides a front-end application to write and display the blogs to be read here: https://github.com/JKanaiya/BlogAPIReader. \
+This API :https://github.com/JKanaiya/BlogAPI provides the functionality to facilitate this interaction.
 
-Currently, two official plugins are available:
+## Usage
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Setup
 
-## Expanding the ESLint configuration
+1. Clone the repo
+```bash
+git clone https://github.com/JKanaiya/BlogWriter
+cd BlogWriter
+```
+2. Install dependencies
+```bash
+npm install
+```
+3. Create and configure .env
+```bash
+echo "VITE_BACKEND_URL=<your_backend_url_here>" >> .env
+```
+4. Run the development server
+```bash
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+Features
+--------
+
+- Displays blogs in markdown format
+- Persistent Login/Signup
+- Posts
+    - New Posts 
+    - Edit Posts
+- Comments    
+    - Nested Comments
+    - Editing Comments
+    - Deleting Comment Text
+
+License
+-------
+
+The project is licensed under the GPL license.
+
